@@ -163,9 +163,30 @@ class TestProductRoutes(TestCase):
         response = self.client.post(BASE_URL, data={}, content_type="plain/text")
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    #
-    # ADD YOUR TEST CASES HERE
-    #
+    def test_get_product(self):
+        """It should Get a single Product"""
+        test_product = self._create_products(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_product.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], test_product.name)
+
+    def test_get_product_not_found(self):
+        """It should not Get a Product  that's not found"""
+        response = self.client.get(f"{BASE_URL}/0")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        self.assertIn("was not found", data["message"])
+
+    def test_get_product_out_of_range(self):
+        """It should not Get a Product w/ an ID beyond the range of products"""
+        products = self._create_products(3)
+        # Extract the highest product ID and calculate an out-of-range ID
+        out_of_range_id = max(product.id for product in products) + 1
+        response = self.client.get(f"{BASE_URL}/{out_of_range_id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        self.assertIn("was not found", data["message"])
 
     ######################################################################
     # Utility functions
