@@ -160,6 +160,9 @@ class TestProductRoutes(TestCase):
         response = self.client.post(BASE_URL, data={}, content_type="plain/text")
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+    # ----------------------------------------------------------
+    # TEST READ PRODUCT
+    # ----------------------------------------------------------
     def test_get_product(self):
         """It should Get a single Product"""
         test_product = self._create_products(1)[0]
@@ -185,6 +188,9 @@ class TestProductRoutes(TestCase):
         data = response.get_json()
         self.assertIn("was not found", data["message"])
 
+    # ----------------------------------------------------------
+    # TEST UPDATE
+    # ----------------------------------------------------------
     def test_update_product(self):
         """It should Update an existing Product"""
         # Create a product to update
@@ -200,6 +206,9 @@ class TestProductRoutes(TestCase):
         updated_product = response.get_json()
         self.assertEqual(updated_product["description"], "unknown")
 
+    # ----------------------------------------------------------
+    # TEST LIST ALL PRODUCTS
+    # ----------------------------------------------------------
     def test_get_product_list(self):
         """It should Get a list of Products"""
         self._create_products(5)
@@ -208,6 +217,9 @@ class TestProductRoutes(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 5)
 
+    # ----------------------------------------------------------
+    # TEST DELETE PRODUCT
+    # ----------------------------------------------------------
     def test_delete_product(self):
         """It should Delete a Product"""
         products = self._create_products(5)
@@ -222,6 +234,9 @@ class TestProductRoutes(TestCase):
         new_count = self.get_product_count()
         self.assertEqual(new_count, product_count - 1)
 
+    # ----------------------------------------------------------
+    # TEST QUERY BY (NAME, CATEGORY, AVAILABILITY)
+    # ----------------------------------------------------------
     def test_query_by_name(self):
         """It should Query Products by name"""
         products = self._create_products(5)
